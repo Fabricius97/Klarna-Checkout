@@ -18,6 +18,7 @@ export async function createOrder(product) {
         Authorization: auth
     };
 
+
     const quantity = 1;
     const price = product.price * 100;
     const total_amount = price * quantity;
@@ -66,4 +67,19 @@ export async function createOrder(product) {
     }
 }
 
-export async function retrieveOrder(order_id) {}
+export async function retrieveOrder(order_id) {
+    const path = `/checkout/v3/orders/${order_id}`;
+    const auth = getKlarnaAuth();
+    const url = `${process.env.BASE_URL}${path}`;
+    const method = 'GET';
+    const headers = { Authorization: auth };
+    const response = await fetch(url, { method, headers });
+    if (response.status === 200 || response.status === 201) {
+        const json = await response.json();
+        return json;
+    }  else {
+        return {
+            html_snippet: `<h1>${response.status} ${response.statusText}</h1>`
+        };
+    }
+}
